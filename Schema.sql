@@ -15,7 +15,7 @@ BEGIN
     );
 
   
-    CREATE TABLE [Role] (
+    CREATE TABLE Role (
         role_name varchar(50) PRIMARY KEY,
         title varchar(50),
         description varchar(50),
@@ -68,7 +68,7 @@ BEGIN
         role_name varchar(50),
         PRIMARY KEY (department_name, role_name),
         FOREIGN KEY (department_name) REFERENCES Department(name),
-        FOREIGN KEY (role_name) REFERENCES [Role](role_name)
+        FOREIGN KEY (role_name) REFERENCES Role(role_name)
     );
 
   
@@ -77,16 +77,16 @@ BEGIN
         role_name varchar(50),
         PRIMARY KEY (emp_ID, role_name),
         FOREIGN KEY (emp_ID) REFERENCES Employee(employee_ID),
-        FOREIGN KEY (role_name) REFERENCES [Role](role_name)
+        FOREIGN KEY (role_name) REFERENCES Role(role_name)
     );
 
 
     CREATE TABLE Leave (
         request_ID int IDENTITY(1,1) PRIMARY KEY,
         date_of_request date,
-        start_date date,
+        startdate date,
         end_date date,
-        num_days int,
+        num_days AS DATEDIFF(day, startdate, end_date),
         final_approval_status varchar(50) default 'pending',
         check (final_approval_status in ('approved','rejected','pending'))
     );
@@ -165,7 +165,7 @@ BEGIN
         date date,
         check_in_time time,
         check_out_time time,
-        total_duration time,
+        total_duration AS DATEDIFF(minute, check_in_time, check_out_time),
         status varchar(50) default 'Absent',
         emp_ID int,
         FOREIGN KEY (emp_ID) REFERENCES Employee(employee_ID),
@@ -258,7 +258,7 @@ BEGIN
     DROP TABLE Role_existsIn_Department;
     DROP TABLE Employee_Phone;
     DROP TABLE Employee;
-    DROP TABLE [Role];
+    DROP TABLE Role;
     DROP TABLE Department;
 END;
 GO
@@ -284,7 +284,7 @@ BEGIN
     DELETE FROM Role_existsIn_Department;
     DELETE FROM Employee_Phone;
     DELETE FROM Employee;
-    DELETE FROM [Role];
+    DELETE FROM Role;
     DELETE FROM Department;
 END;
 GO
@@ -292,9 +292,35 @@ GO
 CREATE PROCEDURE dropAllProceduresFunctionsViews
 AS
 BEGIN
-    DROP PROCEDURE createAllTables;
-    DROP PROCEDURE dropAllTables;
-    DROP PROCEDURE clearAllTables;
+    -- DROP VIEWS (from 2.2)
+    DROP VIEW IF EXISTS allEmployeeProfiles;
+    DROP VIEW IF EXISTS NoEmployeeDept;
+    DROP VIEW IF EXISTS allPerformance;
+    DROP VIEW IF EXISTS allRejectedMedicals;
+    DROP VIEW IF EXISTS allEmployeeAttendance;
+
+    -- DROP FUNCTIONS (from 2.4 & 2.5)
+    DROP FUNCTION IF EXISTS HRLoginValidation;
+    DROP FUNCTION IF EXISTS Is_On_Leave;
+    DROP FUNCTION IF EXISTS Bonus_amount;
+    DROP FUNCTION IF EXISTS Find_Employee_Leave_History;
+
+    -- DROP PROCEDURES (from 2.1, 2.3, 2.4, 2.5)
+    -- Section 2.1 Basic Procedures
+    DROP PROCEDURE IF EXISTS createAllTables;
+    DROP PROCEDURE IF EXISTS dropAllTables;
+    DROP PROCEDURE IF EXISTS clearAllTables;
+
+    -- Section 2.3 & 2.5 (The rest of the required procedures)
+    DROP PROCEDURE IF EXISTS Upperboard_approve_unpaids;
+    DROP PROCEDURE IF EXISTS Dean_andHR_Evaluation;
+    DROP PROCEDURE IF EXISTS Submit_annual;
+    DROP PROCEDURE IF EXISTS Submit_accidental;
+    DROP PROCEDURE IF EXISTS Submit_medical;
+    DROP PROCEDURE IF EXISTS Submit_compensation;
+    DROP PROCEDURE IF EXISTS HR_Update_Doc;
+    DROP PROCEDURE IF EXISTS HR_Remove_Deductions;
 END;
 GO
 createAllTables;
+
