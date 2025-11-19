@@ -84,9 +84,9 @@ BEGIN
     CREATE TABLE Leave (
         request_ID int IDENTITY(1,1) PRIMARY KEY,
         date_of_request date,
-        startdate date,
+        start_date date,
         end_date date,
-        num_days AS DATEDIFF(day, startdate, end_date),
+        num_days AS DATEDIFF(day, start_date, end_date),
         final_approval_status varchar(50) default 'pending',
         check (final_approval_status in ('approved','rejected','pending'))
     );
