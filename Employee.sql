@@ -1,3 +1,5 @@
+USE University_HR_ManagementSystem_Team_101;
+GO
 CREATE VIEW allEmployeeProfiles AS
 SELECT 
     employee_ID,
