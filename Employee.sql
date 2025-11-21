@@ -19,14 +19,12 @@ go
 
 CREATE VIEW NoEmployeeDept AS
 SELECT 
-    D.name AS department_name,
-    D.building_location,
-    COUNT(E.employee_ID) AS number_of_employees
+    D.name, 
+    COUNT(E.employee_ID) AS No_of_Employees 
 FROM Department D
 LEFT JOIN Employee E ON D.name = E.dept_name
 GROUP BY 
-    D.name,
-    D.building_location;
+    D.name;
 
     go
 
@@ -49,7 +47,7 @@ SELECT
     ML.disability_details,
     ML.type,
     L.date_of_request,
-    L.startdate,
+    L.start_date,
     L.end_date,
     L.final_approval_status
 FROM Medical_Leave ML
