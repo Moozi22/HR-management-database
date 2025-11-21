@@ -1,4 +1,3 @@
-
 CREATE PROCEDURE Update_Status_Doc
 AS
 UPDATE Document
