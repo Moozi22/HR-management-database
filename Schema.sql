@@ -86,7 +86,7 @@ BEGIN
         date_of_request date,
         start_date date,
         end_date date,
-        num_days AS DATEDIFF(day, start_date, end_date),
+        num_days AS DATEDIFF(day, start_date, end_date) + 1,
         final_approval_status varchar(50) default 'pending',
         check (final_approval_status in ('approved','rejected','pending'))
     );
@@ -160,17 +160,18 @@ BEGIN
     );
 
   
-    CREATE TABLE Attendance (
-        attendance_ID int IDENTITY(1,1) PRIMARY KEY,
-        date date,
-        check_in_time time,
-        check_out_time time,
-        total_duration AS DATEDIFF(minute, check_in_time, check_out_time),
-        status varchar(50) default 'Absent',
-        emp_ID int,
-        FOREIGN KEY (emp_ID) REFERENCES Employee(employee_ID),
-        check(status in ('Attended','Absent'))
-    );
+   CREATE TABLE Attendance (
+    attendance_ID int IDENTITY(1,1) PRIMARY KEY,
+    date date,
+    check_in_time time,
+    check_out_time time,
+    total_duration AS DATEDIFF(minute, check_in_time, check_out_time), 
+    status varchar(50) default 'Absent',
+    emp_ID int,
+    FOREIGN KEY (emp_ID) REFERENCES Employee(employee_ID),
+    check(status in ('Attended','Absent'))
+);
+    
 
    
     CREATE TABLE Deduction (
@@ -216,11 +217,11 @@ BEGIN
 
    
     CREATE TABLE Employee_Replace_Employee (
+        Table_ID int IDENTITY(1,1) PRIMARY KEY
         Emp1_ID int,
         Emp2_ID int,
         from_date date,
         to_date date,
-        PRIMARY KEY (Emp1_ID, Emp2_ID, from_date),
         FOREIGN KEY (Emp1_ID) REFERENCES Employee(employee_ID),
         FOREIGN KEY (Emp2_ID) REFERENCES Employee(employee_ID)
     );
@@ -322,5 +323,6 @@ BEGIN
     DROP PROCEDURE IF EXISTS HR_Remove_Deductions;
 END;
 GO
-createAllTables;
+
+
 

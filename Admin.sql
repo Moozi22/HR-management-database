@@ -1,3 +1,5 @@
+USE University_HR_ManagementSystem_Team_101;
+GO
 CREATE PROCEDURE Update_Status_Doc
 AS
 UPDATE Document

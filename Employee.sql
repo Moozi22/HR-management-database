@@ -31,10 +31,10 @@ GROUP BY
 CREATE VIEW allPerformance AS
 SELECT 
     performance_ID,
-    emp_ID,
-    rating,
+    rating,            
     comments,
-    semester
+    semester,
+    emp_ID            
 FROM Performance
 WHERE semester LIKE 'W%';
 
