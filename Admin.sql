@@ -18,7 +18,91 @@ WHERE emp_ID IN (
 );
 GO
 
---c lesa
+
+CREATE PROCEDURE Update_Employment_Status
+    @Employee_ID int
+AS
+BEGIN
+    DECLARE @today date = CAST(GETDATE() AS date);
+
+    -- If employee is resigned or in notice_period → do nothing
+    IF (SELECT employment_status 
+        FROM Employee 
+        WHERE employee_ID = @Employee_ID)
+        IN ('resigned', 'notice_period')
+        RETURN;
+    
+    -- Annual Leave
+    IF EXISTS (
+        SELECT 1
+        FROM Annual_Leave AL
+        JOIN [Leave] L ON L.request_ID = AL.request_ID
+        WHERE AL.emp_ID = @Employee_ID
+          AND L.final_approval_status IN ('approved','pending')
+          AND L.startdate <= @today
+          AND L.end_date >= @today
+    )
+        UPDATE Employee SET employment_status = 'onleave' WHERE employee_ID = @Employee_ID;
+    ELSE
+    
+    -- Accidental Leave
+    IF EXISTS (
+        SELECT 1
+        FROM Accidental_Leave AC
+        JOIN [Leave] L ON L.request_ID = AC.request_ID
+        WHERE AC.emp_ID = @Employee_ID
+          AND L.final_approval_status IN ('approved','pending')
+          AND L.startdate <= @today
+          AND L.end_date >= @today
+    )
+        UPDATE Employee SET employment_status = 'onleave' WHERE employee_ID = @Employee_ID;
+    ELSE
+    
+    -- Medical Leave
+    IF EXISTS (
+        SELECT 1
+        FROM Medical_Leave M
+        JOIN [Leave] L ON L.request_ID = M.request_ID
+        WHERE M.emp_ID = @Employee_ID
+          AND L.final_approval_status IN ('approved','pending')
+          AND L.startdate <= @today
+          AND L.end_date >= @today
+    )
+        UPDATE Employee SET employment_status = 'onleave' WHERE employee_ID = @Employee_ID;
+    ELSE
+
+    -- Unpaid Leave
+    IF EXISTS (
+        SELECT 1
+        FROM Unpaid_Leave U
+        JOIN [Leave] L ON L.request_ID = U.request_ID
+        WHERE U.emp_ID = @Employee_ID
+          AND L.final_approval_status IN ('approved','pending')
+          AND L.startdate <= @today
+          AND L.end_date >= @today
+    )
+        UPDATE Employee SET employment_status = 'onleave' WHERE employee_ID = @Employee_ID;
+    ELSE
+    
+    -- Compensation Leave
+    IF EXISTS (
+        SELECT 1
+        FROM Compensation_Leave C
+        JOIN [Leave] L ON L.request_ID = C.request_ID
+        WHERE C.emp_ID = @Employee_ID
+          AND L.final_approval_status IN ('approved','pending')
+          AND L.startdate <= @today
+          AND L.end_date >= @today
+    )
+        UPDATE Employee SET employment_status = 'onleave' WHERE employee_ID = @Employee_ID;
+    ELSE
+
+    -- No leave today so employee is active
+        UPDATE Employee SET employment_status = 'active' WHERE employee_ID = @Employee_ID;
+
+END;
+GO
+
 
 CREATE PROCEDURE Create_Holiday
 AS

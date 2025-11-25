@@ -1,7 +1,7 @@
 USE University_HR_ManagementSystem_Team_101;
 GO
 
--- 2.4.a
+-- 2.4.a......
 IF OBJECT_ID('HRLoginValidation', 'FN') IS NOT NULL DROP FUNCTION HRLoginValidation;
 GO
 CREATE FUNCTION HRLoginValidation
