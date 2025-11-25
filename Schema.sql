@@ -177,7 +177,7 @@ BEGIN
     CREATE TABLE Deduction (
         deduction_ID int IDENTITY(1,1) PRIMARY KEY,
         emp_ID int,
-        [date] date,
+        date date,
         amount decimal(10,2),
         type varchar(50),
         status varchar(50) default 'Pending',
